@@ -1,0 +1,21 @@
+pipeline {
+    agent{
+       label 'docker-slave'
+    }
+  
+  environment {
+
+    DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+     registry = "yoursureshdockerhub/lmsbackend"
+        registryCredential = 'dockerhub'
+        dockerImage = ''
+    }
+    
+     stages {
+        
+         stage('creating  new docker network') {
+            steps {
+               
+                sh 'docker network create lmsnetwork'
+            }
+        }
