@@ -22,7 +22,7 @@ pipeline {
         }
          stage('Logging into dockerhub account') {
             steps {
-                sh 'echo $DOCKER-CREDENTIALS_CREDENTIALS_PSW |sudo docker login -u $DOCKER-CREDENTIALS_CREDENTIALS_USR --password-stdin'
+                sh 'echo $DOCKER-CREDENTIALS_CREDENTIALS_PSW | docker login -u $DOCKER-CREDENTIALS_CREDENTIALS_USR --password-stdin'
             }
         }          
         stage('pushing the docker image into dockerhub') {
