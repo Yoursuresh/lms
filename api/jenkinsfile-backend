@@ -13,13 +13,14 @@ pipeline {
     
      stages {
         
-         stage('creating  new docker network') {
+         stage('building the docker image') {
             steps {
                
-                sh 'docker network create lmsnetwork'
+                sh 'cd api && docker build -t yoursureshdockerhub/lms-backend .'
             }
           
           }
+                
         }
     }
-        
+}    
