@@ -16,7 +16,7 @@ pipeline {
          stage('building the docker image') {
             steps {
                
-                sh 'cd api && docker build -t yoursureshdockerhub/lms-backend .'
+                sh 'cd api && docker build -t yoursureshdockerhub/lmsbackend .'
             }
           
         }
