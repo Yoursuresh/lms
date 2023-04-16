@@ -18,5 +18,8 @@ pipeline {
                
                 sh 'docker network create lmsnetwork'
             }
+          
+          }
         }
-        }
+    }
+}          
