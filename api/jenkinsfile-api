@@ -1,22 +1,29 @@
 pipeline {
     agent{
-       label 'docker-slave'
+       label 'lms-project'
     }
   
   environment {
 
     DOCKERHUB_CREDENTIALS = credentials('docker-credentials')
-     registry = "yoursureshdockerhub/lmsbackend"
+     registry = "yoursureshdockerhub/lms-api"
         registryCredential = 'docker-credentials'
         dockerImage = ''
     }
     
      stages {
+     
+         stage('creating  new docker network') {
+            steps {
+               
+                sh 'docker network create lmsnetwork'
+            }
+        }
         
          stage('building the docker image') {
             steps {
                
-                sh 'cd api && docker build -t yoursureshdockerhub/lms-backend .'
+                sh 'cd api && docker build -t yoursureshdockerhub/lms-api .'
             }
           
         }
@@ -27,7 +34,7 @@ pipeline {
         }          
         stage('pushing the docker image into dockerhub') {
             steps {
-                  sh 'docker push yoursureshdockerhub/lmsbackend'
+                  sh 'docker push yoursureshdockerhub/lms-api'
             }
         }
         stage('Remove old docker images') {
@@ -44,7 +51,7 @@ pipeline {
          stage('Running the docker container') {
             steps {
                   sh 'docker container rm --force backend'
-                  sh 'docker run -d -p 8080:8080 --network lmsnetwork -e DATABASE_URL=postgresql://postgres:password@lmsdb:5432/postgres --name backend -e PORT=8080 -e MODE=local yoursureshdockerhub/lmsbackend:latest'
+                  sh 'docker run -d -p 8080:8080 --network lmsnetwork -e DATABASE_URL=postgresql://postgres:password@lmsdb:5432/postgres --name backend -e PORT=8080 -e MODE=local yoursureshdockerhub/lms-api'
             }
         }
     }
