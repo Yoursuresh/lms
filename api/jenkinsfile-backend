@@ -32,7 +32,7 @@ pipeline {
         }
         stage('Remove old docker images') {
              steps {
-                 sh 'docker rmi -f yoursureshdockerhub/lms-backend'
+                 sh 'docker rmi -f yoursureshdockerhub/lmsbackend'
             }
         }
          stage('creating database container') {
