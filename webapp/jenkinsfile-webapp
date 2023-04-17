@@ -1,1 +1,45 @@
+pipeline {
+    agent {
+      label 'lms-project'
+    }
+
+    environment {
+
+    DOCKERHUB_CREDENTIALS = credentials('docker-credentials')
+     registry = "yoursureshdockerhub/lms-webapp"
+        registryCredential = 'docker-credentials'
+        dockerImage = ''
+    }
+
+    stages {
+        
+
+        stage('Building the docker image') {
+            steps {
+                sh 'cd webapp && docker build -t yoursureshdockerhub/lms-webapp .'
+            }
+        }
+        stage('Logging into dockerhub account') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        stage('pushing the docker image into dockerhub') {
+            steps {
+                  sh 'docker push yoursureshdockerhub/lms-webapp'
+            }
+        }
+        stage('Remove old docker images') {
+             steps {
+                 sh 'docker rmi -f yoursureshdockerhub/lms-webapp'
+            }
+        }
+         stage('Running the docker container') {
+            steps {
+                  sh 'docker container rm --force f-end'
+                  sh 'docker run -dt -p 8000:80 --name f-end yoursureshdockerhub/lms-webapp'
+            }
+        }
+    }
+}
 
