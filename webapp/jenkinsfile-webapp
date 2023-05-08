@@ -1,6 +1,6 @@
 pipeline {
     agent {
-      label 'lms-project'
+      label 'lms-slave'
     }
 
     environment {
