@@ -1,13 +1,13 @@
 pipeline {
     agent{
-       label 'lms-project'
+       label 'lms-slave'
     }
   
   environment {
 
-    DOCKERHUB_CREDENTIALS = credentials('docker-credentials')
+    DOCKERHUB_CREDENTIALS = credentials('lms-credentials')
      registry = "yoursureshdockerhub/lms-api"
-        registryCredential = 'docker-credentials'
+        registryCredential = 'lms-credentials'
         dockerImage = ''
     }
     
