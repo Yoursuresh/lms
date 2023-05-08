@@ -1,13 +1,13 @@
 pipeline {
     agent {
-      label 'lms-project'
+      label 'lms-project-fe'
     }
 
     environment {
 
-    DOCKERHUB_CREDENTIALS = credentials('docker-credentials')
-     registry = "yoursureshdockerhub/lms-webapp"
-        registryCredential = 'docker-credentials'
+    DOCKERHUB_CREDENTIALS = credentials('yoursureshdockerhub')
+     registry = "yoursureshdockerhub/webapp"
+        registryCredential = 'yoursureshdockerhub'
         dockerImage = ''
     }
 
@@ -16,7 +16,7 @@ pipeline {
 
         stage('Building the docker image') {
             steps {
-                sh 'cd webapp && docker build -t yoursureshdockerhub/lms-webapp .'
+                sh 'cd webapp && docker build -t yoursureshdockerhub/webapp .'
             }
         }
         stage('Logging into dockerhub account') {
@@ -26,18 +26,18 @@ pipeline {
         }
         stage('pushing the docker image into dockerhub') {
             steps {
-                  sh 'docker push yoursureshdockerhub/lms-webapp'
+                  sh 'docker push yoursureshdockerhub/webapp'
             }
         }
         stage('Remove old docker images') {
              steps {
-                 sh 'docker rmi -f yoursureshdockerhub/lms-webapp'
+                 sh 'docker rmi -f yoursureshdockerhub/webapp'
             }
         }
          stage('Running the docker container') {
             steps {
                   sh 'docker container rm --force f-end'
-                  sh 'docker run -dt -p 8000:80 --name f-end yoursureshdockerhub/lms-webapp'
+                  sh 'docker run -dt -p 8000:80 --name f-end yoursureshdockerhub/webapp'
             }
         }
     }
