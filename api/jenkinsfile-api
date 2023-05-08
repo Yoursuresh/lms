@@ -10,7 +10,15 @@ pipeline {
         registryCredential = 'lms-credentials'
         dockerImage = ''
     }
-    
+        stages {
+     
+         stage('creating  new docker network') {
+            steps {
+               
+                sh 'docker network create lmsnetwork'
+            }
+        }
+      
 
         
          stage('building the docker image') {
