@@ -1,0 +1,58 @@
+pipeline {
+    agent{
+       label 'lms-slave'
+    }
+  
+  environment {
+
+    DOCKERHUB_CREDENTIALS = credentials('lms-credentials')
+     registry = "yoursureshdockerhub/lms-api"
+        registryCredential = 'lms-credentials'
+        dockerImage = ''
+    }
+    
+     stages {
+     
+         stage('creating  new docker network') {
+            steps {
+               
+                sh 'docker network create lmsnetwork'
+            }
+        }
+        
+         stage('building the docker image') {
+            steps {
+               
+                sh 'cd api && docker build -t yoursureshdockerhub/lms-api .'
+            }
+          
+        }
+         stage('Logging into dockerhub account') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }          
+        stage('pushing the docker image into dockerhub') {
+            steps {
+                  sh 'docker push yoursureshdockerhub/lms-api'
+            }
+        }
+        stage('Remove old docker images') {
+             steps {
+                 sh 'docker rmi -f yoursureshdockerhub/lmsbackend'
+            }
+        }
+         stage('creating database container') {
+             steps {
+                 sh 'docker container rm --force lmsdb'
+                 sh 'docker run -d -p 5432:5432 --network lmsnetwork -e  POSTGRES_PASSWORD=password --name lmsdb postgres'
+            }
+        }
+         stage('Running the docker container') {
+            steps {
+                  sh 'docker container rm --force backend'
+                  sh 'docker run -d -p 8080:8080 --network lmsnetwork -e DATABASE_URL=postgresql://postgres:password@lmsdb:5432/postgres --name backend -e PORT=8080 -e MODE=local yoursureshdockerhub/lms-api'
+            }
+        }
+    }
+}
