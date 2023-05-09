@@ -1,22 +1,28 @@
 pipeline {
     agent{
-       label 'lms-slave'
+       label 'lms-project'
     }
   
   environment {
 
-    DOCKERHUB_CREDENTIALS = credentials('yoursureshdockerhub')
-     registry = "yoursureshdockerhub/api"
-        registryCredential = 'yoursureshdockerhub'
+    DOCKERHUB_CREDENTIALS = credentials('lms-project')
+     registry = "yoursureshdockerhub/project-api"
+        registryCredential = 'lms-project'
         dockerImage = ''
     }
     
      stages {
-     
+   
+         stage('creating  new docker network') {
+            steps {
+               
+                sh 'docker network create lmsnetwork'
+            }
+        } 
          stage('building the docker image') {
             steps {
                
-                sh 'cd api && docker build -t yoursureshdockerhub/api .'
+                sh 'cd api && docker build -t yoursureshdockerhub/project-api .'
             }
           
         }
@@ -27,12 +33,12 @@ pipeline {
         }          
         stage('pushing the docker image into dockerhub') {
             steps {
-                  sh 'docker push yoursureshdockerhub/api'
+                  sh 'docker push yoursureshdockerhub/project-api'
             }
         }
         stage('Remove old docker images') {
              steps {
-                 sh 'docker rmi -f yoursureshdockerhub/lmsbackend'
+                 sh 'docker rmi -f yoursureshdockerhub/project-api'
             }
         }
          stage('creating database container') {
@@ -44,7 +50,7 @@ pipeline {
          stage('Running the docker container') {
             steps {
                   sh 'docker container rm --force backend'
-                  sh 'docker run -d -p 8080:8080 --network lmsnetwork -e DATABASE_URL=postgresql://postgres:password@lmsdb:5432/postgres --name backend -e PORT=8080 -e MODE=local yoursureshdockerhub/api'
+                  sh 'docker run -d -p 8080:8080 --network lmsnetwork -e DATABASE_URL=postgresql://postgres:password@lmsdb:5432/postgres --name backend -e PORT=8080 -e MODE=local yoursureshdockerhub/project-api'
             }
         }
     }
