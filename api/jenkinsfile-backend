@@ -24,7 +24,9 @@ pipeline {
             steps {
                
                 sh 'cd api && docker build -t yoursureshdockerhub/lms-project-backend'
-            }
+            } 
+
+        }
          stage('code quality check with sonarqube') {
             steps {
                
@@ -32,7 +34,7 @@ pipeline {
             }
           
         }          
-        }
+        
          stage('Logging into dockerhub account') {
             steps {
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
