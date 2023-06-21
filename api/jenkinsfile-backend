@@ -1,23 +1,34 @@
 pipeline {
     agent{
-       label 'lms-project'
+       label 'lms-dockerhub'
     }
   
   environment {
 
-    DOCKERHUB_CREDENTIALS = credentials('yoursureshdockerhub')
-     registry = "yoursureshdockerhub/project-api"
-        registryCredential = 'yoursureshdockerhub'
+    DOCKERHUB_CREDENTIALS = credentials('lms-dockerhub')
+     registry = "yoursureshdockerhub/lms-project-backend"
+        registryCredential = 'lms-dockerhub'
         dockerImage = ''
     }
     
      stages {
    
- 
+         stage('creating  new docker network') {
+            steps {
+               
+                sh 'docker network create lmsnetwork'
+            }
+        }  
+        stage('sonarqube testing') {
+            steps {
+               
+                sh 'docker network create lmsnetwork'
+            }
+        }
          stage('building the docker image') {
             steps {
                
-                sh 'cd api && docker build -t yoursureshdockerhub/project-api .'
+                sh 'cd api && docker container run --rm -e SONAR_HOST_URL="http://20.219.248.133:9000" -e SONAR_LOGIN="sqp_aae445aab5fec16cc31bf38512b4ea72aea8bf5a" -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms-project .'
             }
           
         }
@@ -28,12 +39,12 @@ pipeline {
         }          
         stage('pushing the docker image into dockerhub') {
             steps {
-                  sh 'docker push yoursureshdockerhub/project-api'
+                  sh 'docker push yoursureshdockerhub/lms-project-backend'
             }
         }
         stage('Remove old docker images') {
              steps {
-                 sh 'docker rmi -f yoursureshdockerhub/project-api'
+                 sh 'docker rmi -f yoursureshdockerhub/lms-project-backend'
             }
         }
          stage('creating database container') {
@@ -45,7 +56,7 @@ pipeline {
          stage('Running the docker container') {
             steps {
                   sh 'docker container rm --force backend'
-                  sh 'docker run -d -p 8080:8080 --network lmsnetwork -e DATABASE_URL=postgresql://postgres:password@lmsdb:5432/postgres --name backend -e PORT=8080 -e MODE=local yoursureshdockerhub/project-api'
+                  sh 'docker run -d -p 8080:8080 --network lmsnetwork -e DATABASE_URL=postgresql://postgres:password@lmsdb:5432/postgres --name backend -e PORT=8080 -e MODE=local yoursureshdockerhub/lms-project-backend'
             }
         }
     }
