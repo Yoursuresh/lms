@@ -5,9 +5,9 @@ pipeline {
   
   environment {
 
-    DOCKERHUB_CREDENTIALS = credentials('lms-dockerhub')
+    DOCKERHUB_CREDENTIALS = credentials('yoursureshdockerhub')
      registry = "yoursureshdockerhub/lms-project-backend"
-        registryCredential = 'lms-dockerhub'
+        registryCredential = 'yoursureshdockerhub'
         dockerImage = ''
     }
     
