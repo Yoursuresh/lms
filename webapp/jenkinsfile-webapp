@@ -6,17 +6,23 @@ pipeline {
     environment {
 
     DOCKERHUB_CREDENTIALS = credentials('yoursureshdockerhub')
-     registry = "yoursureshdockerhub/project-webapp"
+     registry = "yoursureshdockerhub/lms-project-frontend"
         registryCredential = 'yoursureshdockerhub'
         dockerImage = ''
     }
 
     stages {
         
-
+         stage('lms-app code quality check with sonarqube') {
+            steps {
+               
+                sh 'cd webapp && docker container run --rm -e SONAR_HOST_URL="http://20.219.248.133:9000" -e SONAR_LOGIN="sqp_aae445aab5fec16cc31bf38512b4ea72aea8bf5a" -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms-project'
+            }
+          
+        }
         stage('Building the docker image') {
             steps {
-                sh 'cd webapp && docker build -t yoursureshdockerhub/project-webapp .'
+                sh 'docker build -t yoursureshdockerhub/lms-project-frontend .'
             }
         }
         stage('Logging into dockerhub account') {
@@ -26,18 +32,18 @@ pipeline {
         }
         stage('pushing the docker image into dockerhub') {
             steps {
-                  sh 'docker push yoursureshdockerhub/project-webapp'
+                  sh 'docker push yoursureshdockerhub/lms-project-frontend'
             }
         }
         stage('Remove old docker images') {
              steps {
-                 sh 'docker rmi -f yoursureshdockerhub/project-webapp'
+                 sh 'docker rmi -f yoursureshdockerhub/lms-project-frontend'
             }
         }
          stage('Running the docker container') {
             steps {
                   sh 'docker container rm --force f-end'
-                  sh 'docker run -dt -p 8000:80 --name f-end yoursureshdockerhub/project-webapp'
+                  sh 'docker run -dt -p 8000:80 --name f-end yoursureshdockerhub/lms-project-frontend'
             }
         }
     }
