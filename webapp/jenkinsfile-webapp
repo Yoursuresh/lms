@@ -22,7 +22,7 @@ pipeline {
         }
         stage('Building the docker image') {
             steps {
-                sh 'docker build -t yoursureshdockerhub/lms-project-frontend .'
+                sh 'cd /path/to/dockerfile/directory && docker build -t yoursureshdockerhub/lms-project-frontend .'
             }
         }
         stage('Logging into dockerhub account') {
