@@ -18,7 +18,7 @@ pipeline {
       
         stage('building frontend image') {
             steps {
-                sh 'cd webapp && docker build -t yoursureshdockerhub/jenkins-eks-fe .'
+                sh 'cd webapp && docker build -t yoursureshdockerhub/jenkins-eks-fe-testing .'
             }
         }
 
@@ -31,13 +31,13 @@ pipeline {
 
         stage('pushing image') {
             steps {
-                sh 'docker push yoursureshdockerhub/jenkins-eks-fe'
+                sh 'docker push yoursureshdockerhub/jenkins-eks-fe-testing'
             }
         }
 
           stage('Removing old-images') {
             steps {
-                sh 'docker rmi -f yoursureshdockerhub/jenkins-eks-fe'
+                sh 'docker rmi -f yoursureshdockerhub/jenkins-eks-fe-testing'
             }
         }
 
