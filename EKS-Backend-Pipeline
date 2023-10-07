@@ -24,7 +24,7 @@ pipeline {
       
         stage('building backend image') {
             steps {
-                sh 'cd api && docker build -t yoursureshdockerhub/jenkins-eks-be .'
+                sh 'cd api && docker build -t yoursureshdockerhub/jenkins-eks-be-testing .'
             }
         }
 
@@ -37,13 +37,13 @@ pipeline {
 
         stage('pushing image') {
             steps {
-                sh 'docker push yoursureshdockerhub/jenkins-eks-be'
+                sh 'docker push yoursureshdockerhub/jenkins-eks-be-testing'
             }
         }
 
           stage('Removing old-images') {
             steps {
-                sh 'docker rmi -f yoursureshdockerhub/jenkins-eks-be'
+                sh 'docker rmi -f yoursureshdockerhub/jenkins-eks-be-testing'
             }
         }
 
