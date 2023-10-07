@@ -49,7 +49,7 @@ pipeline {
 
          stage('removing previous-container') {
             steps {
-                   sh 'docker container rm --force api'
+                   sh 'docker container rm --force api-test'
              }
          }
         stage('running backend container') {
@@ -57,7 +57,7 @@ pipeline {
               
                 sh 'cd k8s-files && kubectl apply -f backend-deployment.yaml'
                 sh 'cd k8s-files && kubectl apply -f backend-service.yaml'
-                sh 'kubectl get all'
+                
         
             }
         }
