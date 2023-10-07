@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lms-api-deployment
+  name: lms-api-deployment-test
   labels:
     tier: backend
 spec:
@@ -15,7 +15,7 @@ spec:
         tier: backend
     spec:
       containers:
-      - name: api
+      - name: api-test
         image: yoursureshdockerhub/jenkins-eks-be-testing:latest
         ports:
         - containerPort: 8080
