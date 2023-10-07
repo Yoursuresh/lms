@@ -16,12 +16,12 @@ spec:
     spec:
       containers:
       - name: webapp-test
-        image: yoursureshdockerhub/kubernetes-fe-testing:latest
+        image: yoursureshdockerhub/jenkins-eks-fe-testing:latest
         ports:
         - containerPort: 80
         env:
         - name: VITE_API_URL
-          value: "http://a8a223fcc64ed4bae97ae8cfb9f3ca52-1435236144.eu-central-1.elb.amazonaws.com:8080/api"
+          value: "http://af08003b48070415fb19865ed81e9b26-496516955.eu-central-1.elb.amazonaws.com:8080/api"
         
 
    
