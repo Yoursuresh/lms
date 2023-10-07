@@ -1,0 +1,65 @@
+
+
+pipeline {
+    agent {
+        label 'eks-slave'
+    }
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('docker-credentials')
+        registry = "yoursureshdockerhub"
+        registryCredential = 'yoursureshdockerhub'
+        dockerImage = ''
+    }
+
+    stages {
+
+        stage('running postgres container') {
+            steps {
+            
+                sh 'cd k8s-files && kubectl apply -f postgres-deployment.yaml'
+                sh ' cd k8s-files && kubectl apply -f postgres-clusterip-service.yaml'
+            }
+        }
+      
+        stage('building backend image') {
+            steps {
+                sh 'cd api && docker build -t yoursureshdockerhub/jenkins-eks-be .'
+            }
+        }
+
+
+        stage('docker login') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+
+        stage('pushing image') {
+            steps {
+                sh 'docker push yoursureshdockerhub/jenkins-eks-be'
+            }
+        }
+
+          stage('Removing old-images') {
+            steps {
+                sh 'docker rmi -f yoursureshdockerhub/jenkins-eks-be'
+            }
+        }
+
+         stage('removing previous-container') {
+            steps {
+                   sh 'docker container rm --force api'
+             }
+         }
+        stage('running backend container') {
+            steps {
+              
+                sh 'cd k8s-files && kubectl apply -f backend-deployment.yaml'
+                sh 'cd k8s-files && kubectl apply -f backend-service.yaml'
+                sh 'kubectl get all'
+        
+            }
+        }
+    }
+}
