@@ -45,10 +45,7 @@ pipeline {
             steps {
               sh 'docker container rm --force webapp'
                sh 'cd k8s-files && kubectl apply -f frontend-deployment.yaml'
-               sh 'cd k8s-files && kubectl apply -f frontend-service.yaml'
-
-                sh 'kubectl get all'
-        
+               sh 'cd k8s-files && kubectl apply -f frontend-service.yaml'        
             }
         }
     }
